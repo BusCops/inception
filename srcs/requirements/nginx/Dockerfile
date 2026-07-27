@@ -2,11 +2,8 @@ FROM debian:12
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends nginx openssl gettext-base \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-# openssl is required for protocols like TLS/SSL for a secure connection (encryption and decryption)
-
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+# openssl is used to generate the self-signed SSL/TLS certificate required by nginx to serve HTTPS traffic.
 
 COPY ./tools/docker-entrypoint.sh /
 
