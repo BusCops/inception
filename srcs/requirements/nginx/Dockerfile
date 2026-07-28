@@ -5,6 +5,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 # openssl is used to generate the self-signed SSL/TLS certificate required by nginx to serve HTTPS traffic.
 
+COPY ./tools/nginx.conf /etc/nginx/nginx.conf
+
 COPY ./tools/docker-entrypoint.sh /
 
 RUN chmod +x /docker-entrypoint.sh
