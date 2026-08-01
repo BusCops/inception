@@ -1,4 +1,4 @@
-#!bin/sh
+#!/bin/sh
 
 set -e
 
@@ -11,11 +11,11 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "Database initialized."
     mysqld --user=mysql --socket=/var/run/mysqld/mysqld.sock & MYSQL_PID=$!
 
-    until mysql -u root --socket=/run/mysqld/mysqld.sock -e "SELECT 1" > /dev/null 2>&1; do
+    until mysql -u root --socket=/var/run/mysqld/mysqld.sock -e "SELECT 1" > /dev/null 2>&1; do
         sleep 0.5
     done
 
-    mysql -u root --socket=/run/mysqld/mysqld.sock << EOF
+    mysql -u root --socket=/var/run/mysqld/mysqld.sock << EOF
     ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASSWORD}'
     CREATE DATABASE  IF NOT EXISTS \`${MYSQL_DATABASE}\` ;
     CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
