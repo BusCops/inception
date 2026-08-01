@@ -1,7 +1,5 @@
 srcs/requirements/nginx/index.html
-
 secrets/credentials.txt
 secrets/db_password.txt
-secrets/ssl_certificate.txt
-
+secrets/db_root_password.txt
 srcs/.env
