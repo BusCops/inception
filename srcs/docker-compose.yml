@@ -3,6 +3,7 @@ services:
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
+    image: nginx
     container_name: nginx
     env_file:
       - .env
@@ -16,6 +17,7 @@ services:
     build:
       context: ./requirements/mariaDB
       dockerfile: Dockerfile
+    image: mariadb
     container_name: mariadb
     restart: always
     env_file:
@@ -44,4 +46,5 @@ volumes:
 
 networks:
   inception:
+    name: inception
     driver: bridge
