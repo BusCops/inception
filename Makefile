@@ -2,15 +2,19 @@ DB_DATA=/home/abenzaho/data
 
 COMPOSE_FILE=./srcs/docker-compose.yml
 
-all : makedir up 
+ENV_FILE=./srcs/.env
 
-makedir:
-	mkdir -p $(DB_DATA)/mariadb
-	mkdir -p $(DB_DATA)/wordpress
-	
-up : makedir
+all : up
+
+up : makedir domain
 	docker compose -f $(COMPOSE_FILE) up -d --build
 
+makedir: 
+	mkdir -p $(DB_DATA)/mariadb
+	mkdir -p $(DB_DATA)/wordpress
+
+domain : $(ENV_FILE)  
+	sudo sh -c 'echo "127.0.0.1 $$(grep "^DOMAIN_NAME=" $(ENV_FILE) | cut -d= -f2)\n127.0.0.1 localhost" > /etc/hosts'
 down :
 	docker compose -f $(COMPOSE_FILE) down
 

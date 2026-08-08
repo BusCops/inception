@@ -7,7 +7,10 @@ services:
     container_name: nginx
     env_file:
       - .env
-    restart: always
+    restart: unless-stopped
+    depends_on:
+      wordpress:
+        condition: service_healthy
     ports:
       - "443:443"
     networks:
@@ -19,14 +22,39 @@ services:
       dockerfile: Dockerfile
     image: mariadb
     container_name: mariadb
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u test"]
     secrets:
       - db_root_password
       - db_password
     volumes:
       - db_data:/var/lib/mysql
+    ports:
+      - "3306"
+    networks:
+      - inception
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    image: wordpress
+    container_name: wordpress
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm83 -t"]
+    volumes:
+      - wp_data:/var/www/html
+    ports:
+      - "9000"
     networks:
       - inception
 
@@ -43,6 +71,12 @@ volumes:
       type: none
       o: bind
       device: /home/abenzaho/data/mariadb
+  wp_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/abenzaho/data/wordpress
 
 networks:
   inception:
